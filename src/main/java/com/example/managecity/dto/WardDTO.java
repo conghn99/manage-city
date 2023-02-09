@@ -1,4 +1,4 @@
-package com.example.managecity.request;
+package com.example.managecity.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpsertWardRequest {
+public class WardDTO {
+    private Integer id;
     private String name;
-    private Integer districtId;
 }

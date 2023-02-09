@@ -1,7 +1,6 @@
 package com.example.managecity.controller;
 
 import com.example.managecity.request.UpsertCertificationRequest;
-import com.example.managecity.request.UpsertCityRequest;
 import com.example.managecity.service.CertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

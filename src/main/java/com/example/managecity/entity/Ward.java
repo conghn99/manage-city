@@ -20,7 +20,7 @@ public class Ward {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private District district;

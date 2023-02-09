@@ -9,7 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpsertWardRequest {
+public class UpsertEmployeeRequest {
+    private String code;
     private String name;
-    private Integer districtId;
+    private String email;
+    private int age;
+    private String phone;
 }

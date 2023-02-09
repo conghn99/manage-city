@@ -29,6 +29,13 @@ public class District {
     private City city;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "district", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "district", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
     private List<Ward> wards;
+
+    @PreRemove
+    private void preRemove() {
+        for (Ward ward : wards) {
+            ward.setDistrict(null);
+        }
+    }
 }

@@ -3,9 +3,11 @@ package com.example.managecity.service;
 import com.example.managecity.dto.DistrictDTO;
 import com.example.managecity.entity.City;
 import com.example.managecity.entity.District;
+import com.example.managecity.entity.Ward;
 import com.example.managecity.exception.NotFoundException;
 import com.example.managecity.repository.CityRepository;
 import com.example.managecity.repository.DistrictRepository;
+import com.example.managecity.repository.WardRepository;
 import com.example.managecity.request.UpsertDistrictRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.List;
 public class DistrictService {
     private final DistrictRepository districtRepository;
     private final CityRepository cityRepository;
+    private final WardRepository wardRepository;
 
     public List<District> getAllDistrict() {
         return districtRepository.findAll();
@@ -35,11 +38,15 @@ public class DistrictService {
         City city = cityRepository.findById(request.getCityId()).orElseThrow(() -> {
             throw new NotFoundException("Ko co city voi id = " + request.getCityId());
         });
-        District district = District.builder()
+        District district = districtRepository.save(District.builder()
                 .name(request.getName())
                 .city(city)
-                .build();
-        return districtRepository.save(district);
+                .build());
+        for (Ward ward : request.getWards()) {
+            ward.setDistrict(district);
+            wardRepository.save(ward);
+        }
+        return district;
     }
 
     @Transactional
@@ -52,7 +59,16 @@ public class DistrictService {
         });
         district.setName(request.getName());
         district.setCity(city);
-        return districtRepository.save(district);
+        districtRepository.save(district);
+        for (Ward w : request.getWards()) {
+            Ward updateWard = wardRepository.findById(w.getId()).orElseThrow(() -> {
+                throw new NotFoundException("Ko co ward voi id = " + w.getId());
+            });
+            updateWard.setName(w.getName());
+            updateWard.setDistrict(district);
+            wardRepository.save(updateWard);
+        }
+        return district;
     }
 
     @Transactional

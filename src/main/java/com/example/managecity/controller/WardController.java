@@ -26,6 +26,11 @@ public class WardController {
         return ResponseEntity.ok(wardService.getWardById(id));
     }
 
+    @GetMapping("/district/{id}")
+    public ResponseEntity<?> getAllWardsByDistrictId(@PathVariable Integer id) {
+        return ResponseEntity.ok(wardService.getWardsByDistrictId(id));
+    }
+
     // them ward
     @PostMapping("")
     public ResponseEntity<?> addWard(@RequestBody UpsertWardRequest request) {
