@@ -1,8 +1,11 @@
 package com.example.managecity.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -25,4 +28,14 @@ public class Ward {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private District district;
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "ward", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST})
+    private List<Employee> employees;
+
+    @PreRemove
+    public void preRemove() {
+        for (Employee e : employees) {
+            e.setWard(null);
+        }
+    }
 }

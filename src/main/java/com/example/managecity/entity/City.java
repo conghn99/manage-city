@@ -27,10 +27,18 @@ public class City{
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
     private List<District> districts;
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST})
+    private List<Employee> employees;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Certification> certifications;
+
     @PreRemove
-    private void preRemove() {
-        for (District district : districts) {
-            district.setCity(null);
+    public void preRemove() {
+        for (Employee e : employees) {
+            e.setCity(null);
         }
     }
 }
