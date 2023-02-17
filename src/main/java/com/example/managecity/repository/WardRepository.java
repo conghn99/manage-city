@@ -12,4 +12,6 @@ import java.util.List;
 public interface WardRepository extends JpaRepository<Ward, Integer> {
     @Query(nativeQuery = true, value = "SELECT * FROM ward w WHERE w.district_id = ?1")
     List<Ward> findWardsByDistrictId(Integer id);
+
+    Ward findByName(String name);
 }
