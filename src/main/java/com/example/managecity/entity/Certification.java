@@ -1,9 +1,12 @@
 package com.example.managecity.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -26,4 +29,12 @@ public class Certification {
 
     @Column(name = "end_date")
     private LocalDateTime endEffectiveDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id")
+    private City city;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "certification", cascade = CascadeType.ALL)
+    private Set<EmployeeCertification> employeeCertifications = new HashSet<>();
 }

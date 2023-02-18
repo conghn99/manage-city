@@ -1,5 +1,6 @@
 package com.example.managecity.repository;
 
+import com.example.managecity.dto.WardDTO;
 import com.example.managecity.entity.District;
 import com.example.managecity.entity.Ward;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,7 @@ public interface WardRepository extends JpaRepository<Ward, Integer> {
     List<Ward> findWardsByDistrictId(Integer id);
 
     Ward findByName(String name);
+
+    @Query("select new com.example.managecity.dto.WardDTO(ed) from Ward ed")
+    List<WardDTO> getAllWards();
 }

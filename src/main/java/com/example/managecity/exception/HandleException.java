@@ -13,18 +13,18 @@ import java.util.Map;
 @RestControllerAdvice
 public class HandleException{
     @ExceptionHandler(BadRequestException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.OK)
     public ErrorMessage handleBadRequestException(BadRequestException exception) {
         return new ErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.OK)
     public ErrorMessage handleNotFoundException(NotFoundException exception) {
         return new ErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorMessage handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

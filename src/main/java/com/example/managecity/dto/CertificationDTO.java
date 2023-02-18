@@ -1,28 +1,29 @@
 package com.example.managecity.dto;
 
-import com.example.managecity.entity.District;
+import com.example.managecity.entity.Certification;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DistrictDTO {
+public class CertificationDTO {
     private Integer id;
     private String name;
+    private LocalDateTime startEffectiveDate;
+    private LocalDateTime endEffectiveDate;
     private Integer cityId;
-    private List<WardDTO> wardDto;
 
-    public DistrictDTO(District entity) {
+    public CertificationDTO(Certification entity) {
         this.setId(entity.getId());
         this.setName(entity.getName());
+        this.setStartEffectiveDate(entity.getStartEffectiveDate());
+        this.setEndEffectiveDate(entity.getEndEffectiveDate());
         this.setCityId(entity.getCity().getId());
-        wardDto.addAll(entity.getWards().stream().map(e -> new WardDTO(e)).collect(Collectors.toList()));
     }
 }

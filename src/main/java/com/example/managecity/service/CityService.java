@@ -1,5 +1,6 @@
 package com.example.managecity.service;
 
+import com.example.managecity.dto.CityDTO;
 import com.example.managecity.entity.City;
 import com.example.managecity.entity.District;
 import com.example.managecity.entity.Ward;
@@ -21,18 +22,18 @@ public class CityService {
     private final DistrictRepository districtRepository;
     private final WardRepository wardRepository;
 
-    public List<City> getAllCity() {
-        return cityRepository.findAll();
+    public List<CityDTO> getAllCity() {
+        return cityRepository.getAllCities();
     }
 
-    public City getCityById(Integer id) {
-        return cityRepository.findById(id).orElseThrow(() -> {
+    public CityDTO getCityById(Integer id) {
+        return new CityDTO(cityRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Ko co city voi id = " + id);
-        });
+        }));
     }
 
     @Transactional
-    public City postCity(UpsertCityRequest request) {
+    public CityDTO postCity(UpsertCityRequest request) {
         City city = City.builder()
                 .name(request.getName())
                 .districts(request.getDistricts())
@@ -52,11 +53,11 @@ public class CityService {
                 wardRepository.save(wa);
             }
         }
-        return city;
+        return new CityDTO(city);
     }
 
     @Transactional
-    public City updateCity(Integer id, UpsertCityRequest request) {
+    public CityDTO updateCity(Integer id, UpsertCityRequest request) {
         City city = cityRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Ko co city voi id = " + id);
         });
@@ -70,7 +71,7 @@ public class CityService {
             updateDis.setCity(city);
             districtRepository.save(updateDis);
         }
-        return city;
+        return new CityDTO(city);
     }
 
     @Transactional

@@ -23,34 +23,35 @@ public class DistrictService {
     private final CityRepository cityRepository;
     private final WardRepository wardRepository;
 
-    public List<District> getAllDistrict() {
-        return districtRepository.findAll();
+    public List<DistrictDTO> getAllDistrict() {
+        return districtRepository.getAllDistricts();
     }
 
-    public District getDistrictById(Integer id) {
-        return districtRepository.findById(id).orElseThrow(() -> {
+    public DistrictDTO getDistrictById(Integer id) {
+        return new DistrictDTO(districtRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Ko co district voi id = " + id);
-        });
+        }));
     }
 
     @Transactional
-    public District postDistrict(UpsertDistrictRequest request) {
+    public DistrictDTO postDistrict(UpsertDistrictRequest request) {
         City city = cityRepository.findById(request.getCityId()).orElseThrow(() -> {
             throw new NotFoundException("Ko co city voi id = " + request.getCityId());
         });
-        District district = districtRepository.save(District.builder()
+        District district = District.builder()
                 .name(request.getName())
                 .city(city)
-                .build());
+                .build();
         for (Ward ward : request.getWards()) {
             ward.setDistrict(district);
             wardRepository.save(ward);
         }
-        return district;
+        districtRepository.save(district);
+        return new DistrictDTO(district);
     }
 
     @Transactional
-    public District updateDistrict(Integer id, UpsertDistrictRequest request) {
+    public DistrictDTO updateDistrict(Integer id, UpsertDistrictRequest request) {
         District district = districtRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Ko co district voi id = " + id);
         });
@@ -68,7 +69,7 @@ public class DistrictService {
             updateWard.setDistrict(district);
             wardRepository.save(updateWard);
         }
-        return district;
+        return new DistrictDTO(district);
     }
 
     @Transactional
@@ -79,20 +80,9 @@ public class DistrictService {
         districtRepository.delete(district);
     }
 
-    public List<DistrictDTO> getDistrictsByCityId(Integer id) {
-        List<District> districts = districtRepository.findDistrictsByCityId(id);
-        List<DistrictDTO> dtoDistricts = new ArrayList<>();
-        districts.forEach(district -> {
-            DistrictDTO districtDTO = convertToDTO(district);
-            dtoDistricts.add(districtDTO);
+    public List<District> getDistrictsByCityId(Integer id) {
+        return districtRepository.findDistrictsByCityId(id).orElseThrow(() -> {
+            throw new NotFoundException("Ko co district voi id = " + id);
         });
-        return dtoDistricts;
-    }
-
-    private DistrictDTO convertToDTO(District district) {
-        DistrictDTO dto = new DistrictDTO();
-        dto.setId(district.getId());
-        dto.setName(district.getName());
-        return dto;
     }
 }

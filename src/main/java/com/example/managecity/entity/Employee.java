@@ -1,10 +1,14 @@
 package com.example.managecity.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.validator.constraints.UniqueElements;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -19,26 +23,33 @@ public class Employee {
     private Integer id;
 
     @Column(name = "code")
-    @NotBlank(message = "code must not blank")
-    @Size(min = 6, max = 10, message = "Code must be be between 6 and 10 character")
-    @UniqueElements(message = "Code already exist")
     private String code;
 
     @Column(name = "name")
-    @NotBlank(message = "name must not blank")
     private String name;
 
     @Column(name = "email")
-    @Email
-    @NotBlank(message = "email must not blank")
     private String email;
 
     @Column(name = "age")
-    @Positive(message = "age must be greater than 0")
     private int age;
 
     @Column(name = "phone")
-    @NotBlank(message = "phone must not blank")
-    @Digits(integer = 11, fraction = 0, message = "invalid phone number")
     private String phone;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id")
+    private City city;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "district_id")
+    private District district;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ward_id")
+    private Ward ward;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    private Set<EmployeeCertification> employeeCertifications  = new HashSet<>();
 }

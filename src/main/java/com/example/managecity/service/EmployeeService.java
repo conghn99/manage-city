@@ -1,5 +1,6 @@
 package com.example.managecity.service;
 
+import com.example.managecity.dto.EmployeeDTO;
 import com.example.managecity.entity.City;
 import com.example.managecity.entity.District;
 import com.example.managecity.entity.Employee;
@@ -26,12 +27,12 @@ public class EmployeeService {
     private final DistrictRepository districtRepository;
     private final WardRepository wardRepository;
 
-    public List<Employee> getAllEmployee() {
-        return employeeRepository.findAll();
+    public List<EmployeeDTO> getAllEmployee() {
+        return employeeRepository.getAllEmployees();
     }
 
     @Transactional
-    public Employee addEmployee(UpsertEmployeeRequest request) {
+    public EmployeeDTO addEmployee(UpsertEmployeeRequest request) {
         if (employeeRepository.findByCode(request.getCode()) != null) {
             throw new BadRequestException("code must be unique");
         }
@@ -39,25 +40,22 @@ public class EmployeeService {
         District district = districtRepository.findByName(request.getDistrict());
         Ward ward = wardRepository.findByName(request.getWard());
         List<District> diLi = city.getDistricts();
-        if (diLi.contains(district)) {
-            List<Ward> waLi = district.getWards();
-            if (!waLi.contains(ward)) {
-                throw new BadRequestException(district.getName() + " district not have " + request.getWard());
-
-            }
-
-            Employee employee = Employee.builder()
-                    .code(request.getCode())
-                    .name(request.getName())
-                    .email(request.getEmail())
-                    .age(request.getAge())
-                    .phone(request.getPhone())
-                    .build();
-            return employeeRepository.save(employee);
-
-        } else {
+        if (!diLi.contains(district)) {
             throw new BadRequestException(city.getName() + " city not have " + request.getDistrict());
         }
+        List<Ward> waLi = district.getWards();
+        if (!waLi.contains(ward)) {
+            throw new BadRequestException(district.getName() + " district not have " + request.getWard());
+        }
+        Employee employee = Employee.builder()
+                .code(request.getCode())
+                .name(request.getName())
+                .email(request.getEmail())
+                .age(request.getAge())
+                .phone(request.getPhone())
+                .build();
+        employeeRepository.save(employee);
+        return new EmployeeDTO(employee);
     }
 
     public void deleteEmployee(Integer id) {
@@ -67,16 +65,16 @@ public class EmployeeService {
         employeeRepository.delete(employee);
     }
 
-    public Employee updateAddress(Integer id, UpdateAddressRequest request) {
+    public EmployeeDTO updateAddress(Integer id, UpdateAddressRequest request) {
         Employee employee = employeeRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Ko co employee voi id = " + id);
         });
         if(!request.getCity().trim().equals("") && !request.getDistrict().trim().equals("") && !request.getWard().trim().equals("")) {
-            employee.setCity(request.getCity());
-            employee.setDistrict(request.getDistrict());
-            employee.setWard(request.getWard());
+            employee.getCity().setName(request.getCity());
+            employee.getDistrict().setName(request.getDistrict());
+            employee.getWard().setName(request.getWard());
             employeeRepository.save(employee);
         }
-        return employee;
+        return new EmployeeDTO(employee);
     }
 }

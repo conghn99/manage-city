@@ -24,7 +24,7 @@ public class City{
     private String name;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "city", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH, CascadeType.REMOVE}, orphanRemoval = true)
     private List<District> districts;
 
     @JsonBackReference
@@ -35,9 +35,9 @@ public class City{
     @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Certification> certifications;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "certification_id")
-    private Certification certification;
+    @JsonBackReference
+    @OneToMany(mappedBy = "city", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EmployeeCertification> employeeCertifications;
 
     @PreRemove
     public void preRemove() {

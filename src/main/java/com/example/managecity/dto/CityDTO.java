@@ -1,6 +1,6 @@
 package com.example.managecity.dto;
 
-import com.example.managecity.entity.District;
+import com.example.managecity.entity.City;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +11,16 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class DistrictDTO {
+@AllArgsConstructor
+public class CityDTO {
     private Integer id;
     private String name;
-    private Integer cityId;
-    private List<WardDTO> wardDto;
+    private List<DistrictDTO> districtDto;
 
-    public DistrictDTO(District entity) {
+    public CityDTO(City entity) {
         this.setId(entity.getId());
         this.setName(entity.getName());
-        this.setCityId(entity.getCity().getId());
-        wardDto.addAll(entity.getWards().stream().map(e -> new WardDTO(e)).collect(Collectors.toList()));
+        districtDto.addAll(entity.getDistricts().stream().map(e -> new DistrictDTO(e)).collect(Collectors.toList()));
     }
 }

@@ -21,18 +21,18 @@ public class WardService {
     private final WardRepository wardRepository;
     private final DistrictRepository districtRepository;
 
-    public List<Ward> getAllWard() {
-        return wardRepository.findAll();
+    public List<WardDTO> getAllWard() {
+        return wardRepository.getAllWards();
     }
 
-    public Ward getWardById(Integer id) {
-        return wardRepository.findById(id).orElseThrow(() -> {
+    public WardDTO getWardById(Integer id) {
+        return new WardDTO(wardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Ko co ward voi id = " + id);
-        });
+        }));
     }
 
     @Transactional
-    public Ward postWard(UpsertWardRequest request) {
+    public WardDTO postWard(UpsertWardRequest request) {
         District district = districtRepository.findById(request.getDistrictId()).orElseThrow(() -> {
             throw new NotFoundException("Ko co ward voi id = " + request.getDistrictId());
         });
@@ -40,11 +40,12 @@ public class WardService {
                 .name(request.getName())
                 .district(district)
                 .build();
-        return wardRepository.save(ward);
+        wardRepository.save(ward);
+        return new WardDTO(ward);
     }
 
     @Transactional
-    public Ward updateWard(Integer id, UpsertWardRequest request) {
+    public WardDTO updateWard(Integer id, UpsertWardRequest request) {
         Ward ward = wardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundException("Ko co ward voi id = " + id);
         });
@@ -53,7 +54,8 @@ public class WardService {
         });
         ward.setName(request.getName());
         ward.setDistrict(district);
-        return wardRepository.save(ward);
+        wardRepository.save(ward);
+        return new WardDTO(ward);
     }
 
     @Transactional
