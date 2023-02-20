@@ -13,6 +13,8 @@ import java.util.List;
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     Employee findByCode(String code);
 
+    Employee getById(Integer id);
+
     @Query("select new com.example.managecity.dto.EmployeeDTO(ed) from Employee ed")
     List<EmployeeDTO> getAllEmployees();
 }

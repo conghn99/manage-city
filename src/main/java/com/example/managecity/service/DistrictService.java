@@ -28,16 +28,12 @@ public class DistrictService {
     }
 
     public DistrictDTO getDistrictById(Integer id) {
-        return new DistrictDTO(districtRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co district voi id = " + id);
-        }));
+        return new DistrictDTO(districtRepository.getById(id));
     }
 
     @Transactional
     public DistrictDTO postDistrict(UpsertDistrictRequest request) {
-        City city = cityRepository.findById(request.getCityId()).orElseThrow(() -> {
-            throw new NotFoundException("Ko co city voi id = " + request.getCityId());
-        });
+        City city = cityRepository.getById(request.getCityId());
         District district = District.builder()
                 .name(request.getName())
                 .city(city)
@@ -52,19 +48,13 @@ public class DistrictService {
 
     @Transactional
     public DistrictDTO updateDistrict(Integer id, UpsertDistrictRequest request) {
-        District district = districtRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co district voi id = " + id);
-        });
-        City city = cityRepository.findById(request.getCityId()).orElseThrow(() -> {
-            throw new NotFoundException("Ko co city voi id = " + request.getCityId());
-        });
+        District district = districtRepository.getById(id);
+        City city = cityRepository.getById(request.getCityId());
         district.setName(request.getName());
         district.setCity(city);
         districtRepository.save(district);
         for (Ward w : request.getWards()) {
-            Ward updateWard = wardRepository.findById(w.getId()).orElseThrow(() -> {
-                throw new NotFoundException("Ko co ward voi id = " + w.getId());
-            });
+            Ward updateWard = wardRepository.getById(w.getId());
             updateWard.setName(w.getName());
             updateWard.setDistrict(district);
             wardRepository.save(updateWard);
@@ -74,15 +64,11 @@ public class DistrictService {
 
     @Transactional
     public void deleteDistrict(Integer id) {
-        District district = districtRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co district voi id = " + id);
-        });
+        District district = districtRepository.getById(id);
         districtRepository.delete(district);
     }
 
     public List<District> getDistrictsByCityId(Integer id) {
-        return districtRepository.findDistrictsByCityId(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co district voi id = " + id);
-        });
+        return districtRepository.findDistrictsByCityId(id);
     }
 }

@@ -11,10 +11,10 @@ import java.util.List;
 
 @Repository
 public interface WardRepository extends JpaRepository<Ward, Integer> {
-    @Query(nativeQuery = true, value = "SELECT * FROM ward w WHERE w.district_id = ?1")
-    List<Ward> findWardsByDistrictId(Integer id);
+    @Query("select new com.example.managecity.dto.WardDTO(ed) from Ward ed where ed.district.id = ?1")
+    List<WardDTO> findWardsByDistrictId(Integer id);
 
-    Ward findByName(String name);
+    Ward getById(Integer id);
 
     @Query("select new com.example.managecity.dto.WardDTO(ed) from Ward ed")
     List<WardDTO> getAllWards();

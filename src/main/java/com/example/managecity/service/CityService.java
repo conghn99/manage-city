@@ -27,9 +27,7 @@ public class CityService {
     }
 
     public CityDTO getCityById(Integer id) {
-        return new CityDTO(cityRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co city voi id = " + id);
-        }));
+        return new CityDTO(cityRepository.getById(id));
     }
 
     @Transactional
@@ -58,9 +56,7 @@ public class CityService {
 
     @Transactional
     public CityDTO updateCity(Integer id, UpsertCityRequest request) {
-        City city = cityRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co city voi id = " + id);
-        });
+        City city = cityRepository.getById(id);
         city.setName(request.getName());
         cityRepository.save(city);
         for (District d : request.getDistricts()) {
@@ -76,9 +72,7 @@ public class CityService {
 
     @Transactional
     public void deleteCity(Integer id) {
-        City city = cityRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co city voi id = " + id);
-        });
+        City city = cityRepository.getById(id);
         cityRepository.delete(city);
     }
 }

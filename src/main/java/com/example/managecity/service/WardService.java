@@ -26,16 +26,12 @@ public class WardService {
     }
 
     public WardDTO getWardById(Integer id) {
-        return new WardDTO(wardRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co ward voi id = " + id);
-        }));
+        return new WardDTO(wardRepository.getById(id));
     }
 
     @Transactional
     public WardDTO postWard(UpsertWardRequest request) {
-        District district = districtRepository.findById(request.getDistrictId()).orElseThrow(() -> {
-            throw new NotFoundException("Ko co ward voi id = " + request.getDistrictId());
-        });
+        District district = districtRepository.getById(request.getDistrictId());
         Ward ward = Ward.builder()
                 .name(request.getName())
                 .district(district)
@@ -46,12 +42,8 @@ public class WardService {
 
     @Transactional
     public WardDTO updateWard(Integer id, UpsertWardRequest request) {
-        Ward ward = wardRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co ward voi id = " + id);
-        });
-        District district = districtRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co district voi id = " + id);
-        });
+        Ward ward = wardRepository.getById(id);
+        District district = districtRepository.getById(request.getDistrictId());
         ward.setName(request.getName());
         ward.setDistrict(district);
         wardRepository.save(ward);
@@ -60,26 +52,11 @@ public class WardService {
 
     @Transactional
     public void deleteWard(Integer id) {
-        Ward ward = wardRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co ward voi id = " + id);
-        });
+        Ward ward = wardRepository.getById(id);
         wardRepository.delete(ward);
     }
 
     public List<WardDTO> getWardsByDistrictId(Integer id) {
-        List<Ward> wards = wardRepository.findWardsByDistrictId(id);
-        List<WardDTO> dtoWards = new ArrayList<>();
-        wards.forEach(ward -> {
-            WardDTO wardDTO = convertToDTO(ward);
-            dtoWards.add(wardDTO);
-        });
-        return dtoWards;
-    }
-
-    private WardDTO convertToDTO(Ward ward) {
-        WardDTO dto = new WardDTO();
-        dto.setId(ward.getId());
-        dto.setName(ward.getName());
-        return dto;
+        return wardRepository.findWardsByDistrictId(id);
     }
 }

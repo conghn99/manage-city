@@ -21,9 +21,7 @@ public class CertificationService {
     }
 
     public CertificationDTO getCertificationById(Integer id) {
-        return new CertificationDTO(certificationRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co certification voi id = " + id);
-        }));
+        return new CertificationDTO(certificationRepository.getById(id));
     }
 
     @Transactional
@@ -39,9 +37,7 @@ public class CertificationService {
 
     @Transactional
     public CertificationDTO updateCertification(Integer id, UpsertCertificationRequest request) {
-        Certification certification = certificationRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co certification voi id = " + id);
-        });
+        Certification certification = certificationRepository.getById(id);
         certification.setName(request.getName());
         certification.setStartEffectiveDate(request.getStartDate());
         certification.setEndEffectiveDate(request.getEndDate());
@@ -51,9 +47,7 @@ public class CertificationService {
 
     @Transactional
     public void deleteCertification(Integer id) {
-        Certification certification = certificationRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Ko co certification voi id = " + id);
-        });
+        Certification certification = certificationRepository.getById(id);
         certificationRepository.delete(certification);
     }
 }

@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface EmployeeCertificationRepository extends JpaRepository<EmployeeCertification, Integer> {
+    EmployeeCertification getById(Integer id);
+
     @Query("select new com.example.managecity.dto.EmployeeCertificationDTO(ed) from EmployeeCertification ed")
     List<EmployeeCertificationDTO> getAll();
 

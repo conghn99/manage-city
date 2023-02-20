@@ -1,14 +1,19 @@
 package com.example.managecity.service;
 
 import com.example.managecity.dto.EmployeeCertificationDTO;
+import com.example.managecity.dto.Response;
 import com.example.managecity.entity.Certification;
 import com.example.managecity.entity.City;
 import com.example.managecity.entity.Employee;
 import com.example.managecity.entity.EmployeeCertification;
 import com.example.managecity.exception.BadRequestException;
 import com.example.managecity.exception.NotFoundException;
+import com.example.managecity.repository.CertificationRepository;
+import com.example.managecity.repository.CityRepository;
 import com.example.managecity.repository.EmployeeCertificationRepository;
 import com.example.managecity.request.UpsertEmployeeCertificationRequest;
+import com.example.managecity.validate.EmployeeCertificationValidate;
+import com.example.managecity.validate.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,26 +23,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeCertificationService {
     private final EmployeeCertificationRepository employeeCertificationRepository;
+    private final EmployeeCertificationValidate employeeCertificationValidate;
+    private final CertificationRepository certificationRepository;
+    private final CityRepository cityRepository;
 
     public List<EmployeeCertificationDTO> getAllEmployeeCertification() {
         return employeeCertificationRepository.getAll();
     }
 
     public EmployeeCertificationDTO getEmployeeCertificationById(Integer id) {
-        return new EmployeeCertificationDTO(employeeCertificationRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Not found with id = " + id);
-        }));
+        return new EmployeeCertificationDTO(employeeCertificationRepository.getById(id));
     }
 
-    public EmployeeCertificationDTO postEmployeeCertification(UpsertEmployeeCertificationRequest request) {
-        List<EmployeeCertificationDTO> diplomas = employeeCertificationRepository.getDiplomaOfEmployee(request.getEmployeeId(), request.getCertificationId(), request.getId());
-        if (diplomas.size() >= 3) {
-            throw new BadRequestException("Can't have more than 3 effective certification at the same time");
-        }
-        for (EmployeeCertificationDTO value : diplomas) {
-            if (value.getCertificationId().equals(request.getCertificationId())) {
-                throw new BadRequestException("Can't have more than 1 effective certification provided by the same city at the same time");
-            }
+    public Response<EmployeeCertificationDTO> postEmployeeCertification(EmployeeCertificationDTO request) {
+        ResponseStatus status = employeeCertificationValidate.validate(null,request);
+        if(status!=ResponseStatus.OK){
+            return new Response<>(status);
         }
         Employee employee = Employee.builder().id(request.getEmployeeId()).build();
         Certification certification = Certification.builder().id(request.getCertificationId()).build();
@@ -50,13 +51,27 @@ public class EmployeeCertificationService {
                 .city(city)
                 .build();
         employeeCertificationRepository.save(employeeCertification);
-        return new EmployeeCertificationDTO(employeeCertification);
+        return new Response<>(new EmployeeCertificationDTO(employeeCertification));
+    }
+
+    public Response<EmployeeCertificationDTO> updateEmployeeCertification(Integer id, EmployeeCertificationDTO request) {
+        EmployeeCertification employeeCertification = employeeCertificationRepository.getById(id);
+        ResponseStatus status = employeeCertificationValidate.validate(id,request);
+        if(status!=ResponseStatus.OK){
+            return new Response<>(status);
+        }
+        Certification certification = certificationRepository.getById(request.getCertificationId());
+        City city = cityRepository.getById(request.getCityId());
+        employeeCertification.setStartDate(request.getStartDate());
+        employeeCertification.setEndDate(request.getEndDate());
+        employeeCertification.setCity(city);
+        employeeCertification.setCertification(certification);
+        employeeCertificationRepository.save(employeeCertification);
+        return new Response<>(new EmployeeCertificationDTO(employeeCertification));
     }
 
     public void deleteEmployeeCertification(Integer id) {
-        EmployeeCertification employeeCertification = employeeCertificationRepository.findById(id).orElseThrow(() -> {
-            throw new NotFoundException("Not found with id = " + id);
-        });
+        EmployeeCertification employeeCertification = employeeCertificationRepository.getById(id);
         employeeCertificationRepository.delete(employeeCertification);
     }
 }

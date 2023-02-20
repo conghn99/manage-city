@@ -14,11 +14,9 @@ import java.util.Set;
 @Repository
 public interface DistrictRepository extends JpaRepository<District, Integer> {
     @Query(nativeQuery = true, value = "SELECT * FROM district d WHERE d.city_id = ?1")
-    Optional<List<District>> findDistrictsByCityId(Integer id);
+    List<District> findDistrictsByCityId(Integer id);
 
-    Set<District> findByIdIn(List<Integer> ids);
-
-    District findByName(String name);
+    District getById(Integer id);
 
     @Query("SELECT new com.example.managecity.dto.DistrictDTO(ed) from District ed")
     List<DistrictDTO> getAllDistricts();

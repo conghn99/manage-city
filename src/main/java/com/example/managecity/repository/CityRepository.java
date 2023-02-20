@@ -12,6 +12,8 @@ import java.util.List;
 public interface CityRepository extends JpaRepository<City, Integer> {
     City findByName(String name);
 
+    City getById(Integer id);
+
     @Query("SELECT new com.example.managecity.dto.CityDTO(ed) from City ed")
     List<CityDTO> getAllCities();
 }

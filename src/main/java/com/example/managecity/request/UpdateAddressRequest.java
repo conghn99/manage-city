@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateAddressRequest {
-    private String city;
-    private String district;
-    private String ward;
+    private Integer city;
+    private Integer district;
+    private Integer ward;
 }
