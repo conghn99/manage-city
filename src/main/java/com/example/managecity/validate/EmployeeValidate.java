@@ -64,7 +64,7 @@ public class EmployeeValidate {
         if(!StringUtils.hasText(code)){
             return ResponseStatus.EMPLOYEE_CODE_IS_NULL;
         }
-        Pattern pattern = Pattern.compile("^[0-9\\w-!@#$%^&*]{6,10}$");
+        Pattern pattern = Pattern.compile("^[^\\s]{6,10}$");
         Matcher matcher = pattern.matcher(code);
         if (!matcher.find()) {
             return ResponseStatus.EMPLOYEE_CODE_WRONG_FORMAT;
@@ -80,7 +80,7 @@ public class EmployeeValidate {
         if(!StringUtils.hasText(email)){
             return ResponseStatus.EMPLOYEE_EMAIL_IS_NULL;
         }
-        Pattern pattern = Pattern.compile("^[a-zA-Z]+[a-zA-Z0-9]*(\\.[a-zA-Z0-9]+)*@{1}[a-zA-Z]+(\\.[a-zA-Z0-9]+)*(\\.[a-zA-Z]{2,})$");
+        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
         Matcher matcher = pattern.matcher(email);
         if(!matcher.find()){
             return ResponseStatus.EMAIL_WRONG_FORMAT;
@@ -92,7 +92,7 @@ public class EmployeeValidate {
         if(!StringUtils.hasText(phone)){
             return ResponseStatus.EMPLOYEE_PHONE_IS_NULL;
         }
-        Pattern pattern = Pattern.compile("^[\\d]{11}$");
+        Pattern pattern = Pattern.compile("^[0-9]{1,11}$");
         Matcher matcher = pattern.matcher(phone);
         if(!matcher.find()){
             return ResponseStatus.PHONE_WRONG_FORMAT;

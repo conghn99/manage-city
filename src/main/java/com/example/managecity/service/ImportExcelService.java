@@ -68,7 +68,7 @@ public class ImportExcelService {
                         request.setDistrictId((int) row.getCell(columnIndex++).getNumericCellValue());
                         request.setWardId((int) row.getCell(columnIndex++).getNumericCellValue());
                     } catch (NullPointerException | IllegalStateException | IllegalArgumentException e) {
-                        listStatus.add("Row " + rowIndex + " 'false': (colum " + columnIndex + ")");
+                        listStatus.add("Row " + rowIndex + " 'false': (column " + columnIndex + ")");
                         continue;
                     }
 
@@ -93,7 +93,7 @@ public class ImportExcelService {
                             .ward(ward)
                             .build();
                     employeeRepository.save(employee);
-                    listStatus.add("Row " + rowIndex + " 'Success':");
+                    listStatus.add("Row " + rowIndex + " 'Success' ");
                 }
                 return new Response<>(listStatus);
             } catch (IOException e) {
